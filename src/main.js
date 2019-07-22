@@ -1,96 +1,142 @@
 import sketch from 'sketch';
-import { ShapePath, Group } from 'sketch/dom';
-import colors from './colors';
+import { Group } from 'sketch/dom';
+import { coreColors, extendedColors } from './colors';
+import createLayers from './layer';
+import initUI from './ui';
 
 var document = sketch.getSelectedDocument();
 
-const SPACE = 32;
-const SWATCH_SIZE = 96;
-const OFFSET = SWATCH_SIZE + SPACE;
-
-
 function toTitleCase(str) {
-    return str.replace(
-        /\w\S*/g,
-        function(txt) {
-            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-        }
-    );
-}
-
-function CreateBox(catIndex, swatchIndex, name, color) {
-    return new ShapePath({
-        name,
-        frame: {
-            width: 96,
-            height: 96,
-            x: OFFSET * swatchIndex,
-            y: OFFSET * catIndex,
-        },
-        shapeType: 'Oval',
-        style: {
-            fills: [
-                {
-                    color: color,
-                    fillType: 'Color',
-                },
-            ],
-        },
-        // locked: true,
+    return str.replace(/\w\S*/g, function(txt) {
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
     });
 }
 
-function createSwatchesFor(catIndex, category) {
-    let output = [],
-        swatchIndex = 0;
-    const categorySwatches = colors[category];
-    
+/* 
+    Takes a group of swatches for each category and
+    creates two Sketch ShapePath's (Fill + Border)
+
+    It then renders a group of layers for each swatch
+    in the category
+*/
+function createSwatchesForCategory(yOffset, category) {
+    let swatches = [],
+        xOffset = 0;
+    const categorySwatches = extendedColors[category];
+
     Object.keys(categorySwatches).forEach(function(label) {
-        output.push(CreateBox(catIndex, swatchIndex, label, categorySwatches[label]));
-        swatchIndex++;
+        const swatch = categorySwatches[label];
+        const layerName = `_Extended/${toTitleCase(category)}/${swatch.codeName} - ${swatch.name}`;
+
+        swatches.push(...createLayers(yOffset, xOffset, swatch, layerName));
+        xOffset++;
     });
 
     var categoryGroup = new Group({
         name: toTitleCase(category),
-        layers: output,
+        layers: swatches,
     });
+
     categoryGroup.adjustToFit();
     return [categoryGroup];
 }
 
-function generateColors() {
+/* 
+    Used for creating the "Extended" theme colours
+*/
+function generateExtendedColors() {
     const output = [];
-    let catIndex = 0;
+    let yOffset = 0;
 
     // For each category, read and return an array of swatches
-    Object.keys(colors).map(function(category) {
-        output.push(...createSwatchesFor(catIndex, category));
-        catIndex++;
+    Object.keys(extendedColors).map(function(category) {
+        output.push(...createSwatchesForCategory(yOffset, category));
+        yOffset++;
     });
 
     return output;
 }
 
+/* 
+    Used for creating the "Core" theme colours
+    eg. Primary, Secondary, Success etc
+*/
+function generateCoreColors() {
+    const swatches = [];
+    let yOffset = 0;
 
-function generateStyles() {
-    const layers = document.pages[0].layers;
+    Object.keys(coreColors).map(function(color) {
+        const swatch = coreColors[color];
+        const layerName = `${toTitleCase(color)}`;
+
+        swatches.push(...createLayers(yOffset, -2, swatch, layerName));
+        yOffset++;
+    });
+
+    var categoryGroup = new Group({
+        name: 'Wee',
+        layers: swatches,
+    });
+    categoryGroup.adjustToFit();
+    return [categoryGroup];
+}
+
+/* 
+    Figure out if we are trying to create a shared style
+    that already exists.
+*/
+function getSharedStyleByName(sharedStyles, name) {
+    if (!sharedStyles) return;
+    return sharedStyles.filter(style => style.name === name)[0];
+}
+
+/*
+    For Styles that already exist in the library,
+    overwrite the existing layer style (keeps id intact),
+    and sync all layers that have that shared style.
+*/
+function syncSharedToLayer(sharedStyle, layer) {
+    sharedStyle.style = layer.style;
+    const layers = sharedStyle.getAllInstancesLayers();
+    for (let layer of layers) layer.style.syncWithSharedStyle(sharedStyle);
+}
+
+/*
+    Loop over all newly-created swatches and 
+    create (or update) layer styles.
+*/
+function renderStyles(layers) {
+    const layerStyles = document.sharedLayerStyles;
 
     layers.forEach(function(group) {
+        // todo this nesting is not good?
         group.layers.forEach(function(layer) {
-            document.sharedLayerStyles.push({
-                name: 'Fill/' + toTitleCase(group.name) + '/' + layer.name,
+            const alreadyExistingStyle = getSharedStyleByName(layerStyles, layer.name);
+            if (alreadyExistingStyle) {
+                syncSharedToLayer(alreadyExistingStyle, layer)
+                return;
+            }
+            layerStyles.push({
+                name: layer.name,
                 style: layer.style,
             });
         });
     });
 }
 
-export default function() {
-    // Render Swatches
-    document.pages[0].layers.push(...generateColors());
+/*
+    Render layers on page
+*/
+function renderLayers(layers) {
+    document.pages[0].layers.push(...layers);
+}
 
-    // Set layer styles
-    generateStyles();
+export default function() {
+    const allColors = [...generateExtendedColors(), ...generateCoreColors()];
+    const generate = () => {
+        renderLayers(allColors), renderStyles(allColors);
+    };
+    initUI({ onGenerate: generate });
 
     sketch.UI.message('All Done! 🎨');
 }
