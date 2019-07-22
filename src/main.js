@@ -3,8 +3,13 @@ import { Group } from 'sketch/dom';
 import { coreColors, extendedColors } from './colors';
 import createLayers from './layer';
 import initUI from './ui';
+import renderDocumentColors from './document-colors';
 
 var document = sketch.getSelectedDocument();
+
+const OPTIONS = {
+    renderDocumentColors: true,
+};
 
 function toTitleCase(str) {
     return str.replace(/\w\S*/g, function(txt) {
@@ -30,6 +35,10 @@ function createSwatchesForCategory(yOffset, category) {
 
         swatches.push(...createLayers(yOffset, xOffset, swatch, layerName));
         xOffset++;
+        
+        if (OPTIONS.renderDocumentColors) {
+            renderDocumentColors(document, swatch);
+        }
     });
 
     var categoryGroup = new Group({
@@ -74,7 +83,7 @@ function generateCoreColors() {
     });
 
     var categoryGroup = new Group({
-        name: 'Wee',
+        name: 'Core',
         layers: swatches,
     });
     categoryGroup.adjustToFit();
@@ -113,7 +122,7 @@ function renderStyles(layers) {
         group.layers.forEach(function(layer) {
             const alreadyExistingStyle = getSharedStyleByName(layerStyles, layer.name);
             if (alreadyExistingStyle) {
-                syncSharedToLayer(alreadyExistingStyle, layer)
+                syncSharedToLayer(alreadyExistingStyle, layer);
                 return;
             }
             layerStyles.push({
@@ -132,9 +141,10 @@ function renderLayers(layers) {
 }
 
 export default function() {
-    const allColors = [...generateExtendedColors(), ...generateCoreColors()];
+    const allColorsAsLayers = [...generateExtendedColors(), ...generateCoreColors()];
     const generate = () => {
-        renderLayers(allColors), renderStyles(allColors);
+        renderLayers(allColorsAsLayers);
+        renderStyles(allColorsAsLayers);
     };
     initUI({ onGenerate: generate });
 
