@@ -1,7 +1,8 @@
 import sketch from 'sketch';
 import { Group } from 'sketch/dom';
 import { coreColors, extendedColors } from './colors';
-import generateStyles from './layer';
+import { generateStyles, getSharedStyleByName, syncSharedToLayer } from './style';
+import generateLayer from './layer';
 import initUI from './ui';
 import renderDocumentColors from './document-colors';
 
@@ -20,37 +21,24 @@ function toTitleCase(str) {
 
 /* 
     Takes a group of swatches for each category and
-    creates two Sketch ShapePath's (Fill + Border)
-
-    It then renders a group of layers for each swatch
-    in the category
+    creates two Sketch Styles (Fill + Border)
 */
-function createSwatchesForCategory(yOffset, category) {
-    let swatches = [],
-        xOffset = 0;
-    const swatchesForCategory = extendedColors[category];
+function createStylesForCategory(category) {
+    let styles = [];
+    const colors = extendedColors[category];
 
-    Object.keys(swatchesForCategory).forEach(function(label) {
-        const swatch = swatchesForCategory[label];
-        const layerName = `_Extended/${toTitleCase(category)}/${swatch.codeName} - ${swatch.name}`;
+    Object.keys(colors).forEach(function(index) {
+        const color = colors[index];
+        const styleName = `_Extended/${toTitleCase(category)}/${color.codeName} - ${color.name}`;
 
-        swatches.push(...generateStyles(yOffset, xOffset, swatch, layerName));
-        xOffset++;
+        styles.push(...generateStyles(color, styleName));
 
         if (OPTIONS.renderDocumentColors) {
-            renderDocumentColors(document, swatch);
+            renderDocumentColors(document, color);
         }
     });
 
-    return swatches;
-
-    // var categoryGroup = new Group({
-    //     name: toTitleCase(category),
-    //     layers: swatches,
-    // });
-
-    // categoryGroup.adjustToFit();
-    // return [categoryGroup];
+    return styles;
 }
 
 /* 
@@ -58,12 +46,10 @@ function createSwatchesForCategory(yOffset, category) {
 */
 function generateExtendedColors() {
     const output = [];
-    let yOffset = 0;
 
     // For each category, read and return an array of swatches
     Object.keys(extendedColors).map(function(category) {
-        output.push(...createSwatchesForCategory(yOffset, category));
-        yOffset++;
+        output.push(...createStylesForCategory(category));
     });
 
     return output;
@@ -75,44 +61,13 @@ function generateExtendedColors() {
 */
 function generateCoreColors() {
     const swatches = [];
-    let yOffset = 0;
 
-    Object.keys(coreColors).map(function(color) {
-        const swatch = coreColors[color];
-        const layerName = `${toTitleCase(color)}`;
-
-        swatches.push(...generateStyles(yOffset, -2, swatch, layerName));
-        yOffset++;
+    Object.keys(coreColors).map(function(name) {
+        const color = coreColors[name];
+        swatches.push(...generateStyles(color, toTitleCase(name)));
     });
 
     return swatches;
-
-    var categoryGroup = new Group({
-        name: 'Core',
-        layers: swatches,
-    });
-    categoryGroup.adjustToFit();
-    return [categoryGroup];
-}
-
-/* 
-    Figure out if we are trying to create a shared style
-    that already exists.
-*/
-function getSharedStyleByName(sharedStyles, name) {
-    if (!sharedStyles) return;
-    return sharedStyles.filter(style => style.name === name)[0];
-}
-
-/*
-    For Styles that already exist in the library,
-    overwrite the existing layer style (keeps id intact),
-    and sync all layers that have that shared style.
-*/
-function syncSharedToLayer(alreadyExistingStyle, newColor) {
-    alreadyExistingStyle.style = newColor.style;
-    const layers = alreadyExistingStyle.getAllInstancesLayers();
-    for (let layer of layers) layer.style.syncWithSharedStyle(alreadyExistingStyle);
 }
 
 /*
@@ -138,18 +93,22 @@ function renderSharedLayerStyles(colorsAsStyles) {
 /*
     Render layers on page
 */
-function renderLayers(layers) {
+function renderLayers() {
+    const styles = document.sharedLayerStyles;
+    const layers = [];
+    console.log(styles);
+    styles.map(function(sharedStyle, index) {
+        // Border and Fill styles should share the same x value
+        layers.push(generateLayer(sharedStyle, Math.floor(index/2), 0));
+    });
     document.pages[0].layers.push(...layers);
 }
 
 export default function() {
-    const allColors = [
-        ...generateExtendedColors(), 
-        ...generateCoreColors()
-    ];
+    const allColors = [...generateExtendedColors(), ...generateCoreColors()];
     const generate = () => {
-        // renderLayers(allColors);
         renderSharedLayerStyles(allColors);
+        renderLayers();
     };
     if (OPTIONS.initUI) {
         initUI({ onGenerate: generate });

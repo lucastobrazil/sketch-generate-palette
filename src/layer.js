@@ -1,4 +1,4 @@
-import { Style } from 'sketch/dom';
+import { ShapePath } from 'sketch/dom';
 
 const SPACE = 32;
 const SWATCH_SIZE = 96;
@@ -16,65 +16,13 @@ function getShapeProperties({ yOffset, xOffset }) {
     };
 }
 
-function generateStyles(yOffset, xOffset, { hex }, layerName) {
-    const layers = [];
-    layers.push(
-        {
-            name: `Border/${layerName}`,
-            style: new Style({
-                borders: [
-                    {
-                        thickness: 1,
-                        color: `#${hex}`,
-                        fillType: 'Color',
-                    },
-                ],
-            }),
-        },
-        {
-            name: `Fill/${layerName}`,
-            style: new Style({
-                fills: [
-                    {
-                        color: `#${hex}`,
-                        fillType: 'Color',
-                    },
-                ],
-            }),
-        }
-    );
-    // layers.push(
-    //     new ShapePath({
-    //         ...getShapeProperties({ yOffset, xOffset }),
-    //         name: `Border/${layerName}`,
-    //         style: {
-    //             borders: [
-    //                 {
-    //                     thickness: 1,
-    //                     color: `#${hex}`,
-    //                     fillType: 'Color',
-    //                 },
-    //             ],
-    //         },
-    //     })
-    // );
-
-    // layers.push(
-    //     new ShapePath({
-    //         ...getShapeProperties({ yOffset, xOffset }),
-    //         name: `Fill/${layerName}`,
-    //         style: {
-    //             fills: [
-    //                 {
-    //                     color: `#${hex}`,
-    //                     fillType: 'Color',
-    //                 },
-    //             ],
-    //         },
-    //     })
-    // );
-
-    return layers;
+function generateLayer(sharedStyle, yOffset, xOffset) {
+    return new ShapePath({
+        ...getShapeProperties({ yOffset, xOffset }),
+        name: sharedStyle.name,
+        style: sharedStyle.style,
+        sharedStyleId: sharedStyle.id
+    });
 }
 
-export default generateStyles;
+export default generateLayer;
