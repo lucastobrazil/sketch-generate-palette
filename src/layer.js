@@ -1,4 +1,4 @@
-import { ShapePath } from 'sketch/dom';
+import { Style } from 'sketch/dom';
 
 const SPACE = 32;
 const SWATCH_SIZE = 96;
@@ -14,15 +14,14 @@ function getShapeProperties({ yOffset, xOffset }) {
         },
         shapeType: 'Oval',
     };
-};
+}
 
-function createLayers(yOffset, xOffset, { hex }, layerName) {
+function generateStyles(yOffset, xOffset, { hex }, layerName) {
     const layers = [];
     layers.push(
-        new ShapePath({
-            ...getShapeProperties({ yOffset, xOffset }),
+        {
             name: `Border/${layerName}`,
-            style: {
+            style: new Style({
                 borders: [
                     {
                         thickness: 1,
@@ -30,26 +29,52 @@ function createLayers(yOffset, xOffset, { hex }, layerName) {
                         fillType: 'Color',
                     },
                 ],
-            },
-        })
-    );
-
-    layers.push(
-        new ShapePath({
-            ...getShapeProperties({ yOffset, xOffset }),
+            }),
+        },
+        {
             name: `Fill/${layerName}`,
-            style: {
+            style: new Style({
                 fills: [
                     {
                         color: `#${hex}`,
                         fillType: 'Color',
                     },
                 ],
-            },
-        })
+            }),
+        }
     );
+    // layers.push(
+    //     new ShapePath({
+    //         ...getShapeProperties({ yOffset, xOffset }),
+    //         name: `Border/${layerName}`,
+    //         style: {
+    //             borders: [
+    //                 {
+    //                     thickness: 1,
+    //                     color: `#${hex}`,
+    //                     fillType: 'Color',
+    //                 },
+    //             ],
+    //         },
+    //     })
+    // );
+
+    // layers.push(
+    //     new ShapePath({
+    //         ...getShapeProperties({ yOffset, xOffset }),
+    //         name: `Fill/${layerName}`,
+    //         style: {
+    //             fills: [
+    //                 {
+    //                     color: `#${hex}`,
+    //                     fillType: 'Color',
+    //                 },
+    //             ],
+    //         },
+    //     })
+    // );
 
     return layers;
 }
 
-export default createLayers;
+export default generateStyles;

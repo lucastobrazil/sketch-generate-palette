@@ -1,7 +1,7 @@
 import sketch from 'sketch';
 import { Group } from 'sketch/dom';
 import { coreColors, extendedColors } from './colors';
-import createLayers from './layer';
+import generateStyles from './layer';
 import initUI from './ui';
 import renderDocumentColors from './document-colors';
 
@@ -9,7 +9,7 @@ var document = sketch.getSelectedDocument();
 
 const OPTIONS = {
     use_GUI: false,
-    renderDocumentColors: true,
+    renderDocumentColors: false,
 };
 
 function toTitleCase(str) {
@@ -28,13 +28,13 @@ function toTitleCase(str) {
 function createSwatchesForCategory(yOffset, category) {
     let swatches = [],
         xOffset = 0;
-    const categorySwatches = extendedColors[category];
+    const swatchesForCategory = extendedColors[category];
 
-    Object.keys(categorySwatches).forEach(function(label) {
-        const swatch = categorySwatches[label];
+    Object.keys(swatchesForCategory).forEach(function(label) {
+        const swatch = swatchesForCategory[label];
         const layerName = `_Extended/${toTitleCase(category)}/${swatch.codeName} - ${swatch.name}`;
 
-        swatches.push(...createLayers(yOffset, xOffset, swatch, layerName));
+        swatches.push(...generateStyles(yOffset, xOffset, swatch, layerName));
         xOffset++;
 
         if (OPTIONS.renderDocumentColors) {
@@ -42,13 +42,15 @@ function createSwatchesForCategory(yOffset, category) {
         }
     });
 
-    var categoryGroup = new Group({
-        name: toTitleCase(category),
-        layers: swatches,
-    });
+    return swatches;
 
-    categoryGroup.adjustToFit();
-    return [categoryGroup];
+    // var categoryGroup = new Group({
+    //     name: toTitleCase(category),
+    //     layers: swatches,
+    // });
+
+    // categoryGroup.adjustToFit();
+    // return [categoryGroup];
 }
 
 /* 
@@ -79,9 +81,11 @@ function generateCoreColors() {
         const swatch = coreColors[color];
         const layerName = `${toTitleCase(color)}`;
 
-        swatches.push(...createLayers(yOffset, -2, swatch, layerName));
+        swatches.push(...generateStyles(yOffset, -2, swatch, layerName));
         yOffset++;
     });
+
+    return swatches;
 
     var categoryGroup = new Group({
         name: 'Core',
@@ -105,31 +109,28 @@ function getSharedStyleByName(sharedStyles, name) {
     overwrite the existing layer style (keeps id intact),
     and sync all layers that have that shared style.
 */
-function syncSharedToLayer(sharedStyle, layer) {
-    sharedStyle.style = layer.style;
-    const layers = sharedStyle.getAllInstancesLayers();
-    for (let layer of layers) layer.style.syncWithSharedStyle(sharedStyle);
+function syncSharedToLayer(alreadyExistingStyle, newColor) {
+    alreadyExistingStyle.style = newColor.style;
+    const layers = alreadyExistingStyle.getAllInstancesLayers();
+    for (let layer of layers) layer.style.syncWithSharedStyle(alreadyExistingStyle);
 }
 
 /*
     Loop over all newly-created swatches and 
     create (or update) layer styles.
 */
-function renderStyles(layers) {
-    const layerStyles = document.sharedLayerStyles;
+function renderSharedLayerStyles(colorsAsStyles) {
+    const sharedLayerStyles = document.sharedLayerStyles;
 
-    layers.forEach(function(group) {
-        // todo this nesting is not good?
-        group.layers.forEach(function(layer) {
-            const alreadyExistingStyle = getSharedStyleByName(layerStyles, layer.name);
-            if (alreadyExistingStyle) {
-                syncSharedToLayer(alreadyExistingStyle, layer);
-                return;
-            }
-            layerStyles.push({
-                name: layer.name,
-                style: layer.style,
-            });
+    colorsAsStyles.forEach(function(color) {
+        const alreadyExistingStyle = getSharedStyleByName(sharedLayerStyles, color.name);
+        if (alreadyExistingStyle) {
+            syncSharedToLayer(alreadyExistingStyle, color);
+            return;
+        }
+        sharedLayerStyles.push({
+            name: color.name,
+            style: color.style,
         });
     });
 }
@@ -142,10 +143,13 @@ function renderLayers(layers) {
 }
 
 export default function() {
-    const allColorsAsLayers = [...generateExtendedColors(), ...generateCoreColors()];
+    const allColors = [
+        ...generateExtendedColors(), 
+        ...generateCoreColors()
+    ];
     const generate = () => {
-        renderLayers(allColorsAsLayers);
-        renderStyles(allColorsAsLayers);
+        // renderLayers(allColors);
+        renderSharedLayerStyles(allColors);
     };
     if (OPTIONS.initUI) {
         initUI({ onGenerate: generate });
