@@ -8,6 +8,7 @@ import renderDocumentColors from './document-colors';
 var document = sketch.getSelectedDocument();
 
 const OPTIONS = {
+    use_GUI: false,
     renderDocumentColors: true,
 };
 
@@ -35,7 +36,7 @@ function createSwatchesForCategory(yOffset, category) {
 
         swatches.push(...createLayers(yOffset, xOffset, swatch, layerName));
         xOffset++;
-        
+
         if (OPTIONS.renderDocumentColors) {
             renderDocumentColors(document, swatch);
         }
@@ -146,7 +147,11 @@ export default function() {
         renderLayers(allColorsAsLayers);
         renderStyles(allColorsAsLayers);
     };
-    initUI({ onGenerate: generate });
+    if (OPTIONS.initUI) {
+        initUI({ onGenerate: generate });
+    } else {
+        generate();
+    }
 
     sketch.UI.message('All Done! 🎨');
 }
