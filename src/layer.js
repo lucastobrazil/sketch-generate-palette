@@ -16,12 +16,12 @@ function getShapeProperties({ yOffset, xOffset }) {
     };
 }
 
-function generateLayer(sharedStyle, yOffset, xOffset) {
+function generateLayer(sharedStyle, sharedStyleId, yOffset, xOffset) {
     return new ShapePath({
         ...getShapeProperties({ yOffset, xOffset }),
         name: sharedStyle.name,
         style: sharedStyle.style,
-        sharedStyleId: sharedStyle.id
+        sharedStyleId: sharedStyleId
     });
 }
 
