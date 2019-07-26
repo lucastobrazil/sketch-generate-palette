@@ -22,20 +22,26 @@ function toTitleCase(str) {
     });
 }
 
-function createGroupForLayers(category, styles, yOffset) {
+function createLayers(styles, yOffset) {
     let layers = [];
     styles.forEach((style, index) => {
         // Each style contains two styles (border + fill)
         const xOffset = (index % 2 === 0 ? index : index - 1) / 2;
-        layers.push(generateLayer(style, getSharedStyleByName(SHARED_LAYER_STYLES, style.name).id, yOffset, xOffset));
+        const styleId = getSharedStyleByName(SHARED_LAYER_STYLES, style.name).id;
+
+        layers.push(generateLayer(style, styleId, yOffset, xOffset));
     });
 
+    return layers;
+}
+
+function createGroupForLayers(category, layers) {
     const categoryGroup = new Group({
         name: toTitleCase(category),
         layers: layers,
     });
     categoryGroup.adjustToFit();
-    return LAYERS_TO_RENDER.push(categoryGroup);
+    LAYERS_TO_RENDER.push(categoryGroup);
 }
 
 /* 
@@ -53,9 +59,9 @@ function createStylesForCategory(category, index) {
 
         styles.push(...generatedStyles);
 
-        if (OPTIONS.renderDocumentColors) {
-            renderDocumentColors(document, color);
-        }
+        // if (OPTIONS.renderDocumentColors) {
+        //     renderDocumentColors(document, color);
+        // }
     });
     // createGroupForLayers(category, styles, index);
 
@@ -70,7 +76,9 @@ function generateExtendedColors() {
     Object.keys(extendedColors).map((category, index) => {
         const colorsAsStyles = createStylesForCategory(category, index);
         renderSharedLayerStyles(colorsAsStyles);
-        createGroupForLayers(category, colorsAsStyles, index)
+
+        const colorsAsLayers = createLayers(colorsAsStyles, index);
+        createGroupForLayers(category, colorsAsLayers);
     });
 }
 
@@ -79,14 +87,18 @@ function generateExtendedColors() {
     eg. Primary, Secondary, Success etc
 */
 function generateCoreColors() {
-    const swatches = [];
+    const colorStyles = [];
 
-    Object.keys(coreColors).map(function(name) {
+    Object.keys(coreColors).map(name => {
         const color = coreColors[name];
-        swatches.push(...generateStyles(color, toTitleCase(name)));
+        const colorAsStyles = generateStyles(color, toTitleCase(name));
+        colorStyles.push(...colorAsStyles);
     });
 
-    return swatches;
+    renderSharedLayerStyles(colorStyles);
+
+    const colorsAsLayers = createLayers(colorStyles, -2);
+    createGroupForLayers('Core', colorsAsLayers);
 }
 
 /*
@@ -94,7 +106,6 @@ function generateCoreColors() {
     create (or update) layer styles.
 */
 function renderSharedLayerStyles(colorsAsStyles) {
-
     colorsAsStyles.forEach(function(color) {
         const alreadyExistingStyle = getSharedStyleByName(SHARED_LAYER_STYLES, color.name);
         if (alreadyExistingStyle) {
@@ -108,13 +119,10 @@ function renderSharedLayerStyles(colorsAsStyles) {
     });
 }
 
-
-
 export default function() {
-    const allColors = [...generateCoreColors()];
     const generate = () => {
-        // renderSharedLayerStyles(allColors);
-        generateExtendedColors()
+        generateExtendedColors();
+        generateCoreColors();
         document.pages[0].layers.push(...LAYERS_TO_RENDER);
     };
     if (OPTIONS.initUI) {
