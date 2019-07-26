@@ -5,24 +5,18 @@ import { generateStyles, getSharedStyleByName, syncSharedToLayer } from './style
 import generateLayer from './layer';
 import initUI from './ui';
 import renderDocumentColors from './document-colors';
+import { toTitleCase } from './util';
 
 const document = sketch.getSelectedDocument();
-const SHARED_LAYER_STYLES = document.sharedLayerStyles;
 
+const SHARED_LAYER_STYLES = document.sharedLayerStyles;
+const LAYERS_TO_RENDER = [];
 const OPTIONS = {
-    use_GUI: false,
+    use_GUI: true,
     renderDocumentColors: false,
 };
 
-const LAYERS_TO_RENDER = [];
-
-function toTitleCase(str) {
-    return str.replace(/\w\S*/g, function(txt) {
-        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-    });
-}
-
-function createLayers(styles, yOffset) {
+function createLayersFromStyles(styles, yOffset) {
     let layers = [];
     styles.forEach((style, index) => {
         // Each style contains two styles (border + fill)
@@ -35,21 +29,21 @@ function createLayers(styles, yOffset) {
     return layers;
 }
 
-function createGroupForLayers(category, layers) {
-    const categoryGroup = new Group({
-        name: toTitleCase(category),
+function createGroupForLayers(groupName, layers) {
+    const group = new Group({
+        name: toTitleCase(groupName),
         layers: layers,
     });
-    categoryGroup.adjustToFit();
-    LAYERS_TO_RENDER.push(categoryGroup);
+    group.adjustToFit();
+    return group;
 }
 
 /* 
     Takes a group of swatches for each category and
     creates two Sketch Styles (Fill + Border)
 */
-function createStylesForCategory(category, index) {
-    let styles = [];
+function createStylesForCategory(category) {
+    const styles = [];
     const colors = extendedColors[category];
 
     Object.keys(colors).forEach(index => {
@@ -63,8 +57,6 @@ function createStylesForCategory(category, index) {
         //     renderDocumentColors(document, color);
         // }
     });
-    // createGroupForLayers(category, styles, index);
-
     return styles;
 }
 
@@ -73,12 +65,14 @@ function createStylesForCategory(category, index) {
 */
 function generateExtendedColors() {
     // For each category, read and return an array of swatches
-    Object.keys(extendedColors).map((category, index) => {
+    Object.keys(extendedColors).forEach((category, index) => {
         const colorsAsStyles = createStylesForCategory(category, index);
+        
         renderSharedLayerStyles(colorsAsStyles);
 
-        const colorsAsLayers = createLayers(colorsAsStyles, index);
-        createGroupForLayers(category, colorsAsLayers);
+        const colorsAsLayers = createLayersFromStyles(colorsAsStyles, index);
+        const layersAsGroup = createGroupForLayers(category, colorsAsLayers);
+        LAYERS_TO_RENDER.push(layersAsGroup);
     });
 }
 
@@ -89,7 +83,7 @@ function generateExtendedColors() {
 function generateCoreColors() {
     const colorStyles = [];
 
-    Object.keys(coreColors).map(name => {
+    Object.keys(coreColors).forEach(name => {
         const color = coreColors[name];
         const colorAsStyles = generateStyles(color, toTitleCase(name));
         colorStyles.push(...colorAsStyles);
@@ -97,8 +91,10 @@ function generateCoreColors() {
 
     renderSharedLayerStyles(colorStyles);
 
-    const colorsAsLayers = createLayers(colorStyles, -2);
-    createGroupForLayers('Core', colorsAsLayers);
+    const colorsAsLayers = createLayersFromStyles(colorStyles, -2);
+    const layersAsGroup = createGroupForLayers('Core', colorsAsLayers);
+    
+    LAYERS_TO_RENDER.push(layersAsGroup);
 }
 
 /*
@@ -125,7 +121,7 @@ export default function() {
         generateCoreColors();
         document.pages[0].layers.push(...LAYERS_TO_RENDER);
     };
-    if (OPTIONS.initUI) {
+    if (OPTIONS.use_GUI) {
         initUI({ onGenerate: generate });
     } else {
         generate();
