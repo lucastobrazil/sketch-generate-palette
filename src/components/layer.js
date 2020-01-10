@@ -16,7 +16,7 @@ function getShapeProperties({ yOffset, xOffset }) {
     };
 }
 
-function generateLayer(sharedStyle, sharedStyleId, yOffset, xOffset) {
+function createLayer(sharedStyle, sharedStyleId, yOffset, xOffset) {
     return new ShapePath({
         ...getShapeProperties({ yOffset, xOffset }),
         name: sharedStyle.name,
@@ -25,4 +25,4 @@ function generateLayer(sharedStyle, sharedStyleId, yOffset, xOffset) {
     });
 }
 
-export default generateLayer;
+export default createLayer;

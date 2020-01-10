@@ -3,7 +3,7 @@
   "icon": "icon.png",
   "commands": [
     {
-      "name": "🎨 ADAPT - Generate Color Palette",
+      "name": "ADAPT - Generate Color Palette",
       "identifier": "main",
       "script": "./index.js"
     }

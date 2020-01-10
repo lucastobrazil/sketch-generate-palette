@@ -1,30 +1,15 @@
-import { Style } from 'sketch/dom';
+import { createFillStyle, createBorderStyle } from './create-style';
 
-function generateStyles({ hex }, layerName) {
+function createStyles({ hex }, layerName) {
     const layers = [];
     layers.push(
         {
             name: `Border/${layerName}`,
-            style: new Style({
-                borders: [
-                    {
-                        thickness: 1,
-                        color: `#${hex}`,
-                        fillType: 'Color',
-                    },
-                ],
-            }),
+            style: createBorderStyle(hex),
         },
         {
             name: `Fill/${layerName}`,
-            style: new Style({
-                fills: [
-                    {
-                        color: `#${hex}`,
-                        fillType: 'Color',
-                    },
-                ],
-            }),
+            style: createFillStyle(hex),
         }
     );
     return layers;
@@ -50,4 +35,4 @@ function syncSharedToLayer(alreadyExistingStyle, newColor) {
     for (let layer of layers) layer.style.syncWithSharedStyle(alreadyExistingStyle);
 }
 
-export { generateStyles, getSharedStyleByName, syncSharedToLayer };
+export { createStyles, getSharedStyleByName, syncSharedToLayer };
