@@ -1,18 +1,18 @@
 import sketch from 'sketch';
 import { Group } from 'sketch/dom';
-import { coreColors, extendedColors } from './colors';
-import { generateStyles, getSharedStyleByName, syncSharedToLayer } from './style';
-import generateLayer from './layer';
-import initUI from './ui';
-import renderDocumentColors from './document-colors';
-import { toTitleCase } from './util';
+import { coreColors, extendedColors } from './components/colors';
+import { generateStyles, getSharedStyleByName, syncSharedToLayer } from './components/style';
+import generateLayer from './components/layer';
+import initUI from './components/ui';
+import renderDocumentColors from './components/document-colors';
+import { toTitleCase } from './components/util';
 
 const document = sketch.getSelectedDocument();
 
 const SHARED_LAYER_STYLES = document.sharedLayerStyles;
 const LAYERS_TO_RENDER = [];
 const OPTIONS = {
-    use_GUI: true,
+    use_GUI: false,
     renderDocumentColors: false,
 };
 
