@@ -21,4 +21,23 @@ const createFillStyle = hex =>
         ],
     });
 
-export { createBorderStyle, createFillStyle };
+/* 
+    Figure out if we are trying to create a shared style
+    that already exists.
+*/
+const getSharedStyleByName = (sharedStyles, name) => {
+    if (!sharedStyles) return;
+    return sharedStyles.filter(style => style.name === name)[0];
+};
+
+const createStyles = ({ hex }, layerName) => [
+    {
+        name: `Border/${layerName}`,
+        style: createBorderStyle(hex),
+    },
+    {
+        name: `Fill/${layerName}`,
+        style: createFillStyle(hex),
+    },
+];
+export { createStyles, getSharedStyleByName };

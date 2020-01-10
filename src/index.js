@@ -1,7 +1,5 @@
 import sketch from 'sketch';
 import { Group } from 'sketch/dom';
-
-/* data input */
 import { coreColors, extendedColors } from './color_tokens';
 import { createStyles, getSharedStyleByName, syncSharedToLayer } from './components/style';
 import createLayer from './components/layer';
@@ -15,7 +13,7 @@ const document = sketch.getSelectedDocument();
 const SHARED_LAYER_STYLES = document.sharedLayerStyles;
 const LAYERS_TO_RENDER = [];
 
-function createLayersFromStyles(styles, yOffset) {
+function createLayers(styles, yOffset) {
     let layers = [];
     styles.forEach((style, index) => {
         // Each style contains two styles (border + fill)
@@ -28,7 +26,7 @@ function createLayersFromStyles(styles, yOffset) {
     return layers;
 }
 
-function createGroupForLayers(groupName, layers) {
+function createGroup(groupName, layers) {
     const group = new Group({
         name: toTitleCase(groupName),
         layers: layers,
@@ -69,33 +67,32 @@ function createExtendedColors() {
 
         createSharedLayerStyles(colorsAsStyles);
 
-        const colorsAsLayers = createLayersFromStyles(colorsAsStyles, index);
-        const layersAsGroup = createGroupForLayers(category, colorsAsLayers);
-        LAYERS_TO_RENDER.push(layersAsGroup);
+        const colorLayers = createLayers(colorsAsStyles, index);
+        const layerGroups = createGroup(category, colorLayers);
+        LAYERS_TO_RENDER.push(layerGroups);
     });
 }
 
 /* 
-    Used for creating the "Core" theme colours
+    Used for creating the "Core" theme colour styles
     eg. Primary, Secondary, Success etc
 */
-function createCoreColors() {
-    const colorStyles = [];
+function createCoreStyles() {
+    const coreStyles = [];
 
+    /* Loop over design tokens for each color */
     Object.keys(coreColors).forEach(name => {
         const color = coreColors[name];
-        
-        /* FIXME: This toTitleCase stuff is not good, consider changing the original data */
         const colorAsStyles = createStyles(color, toTitleCase(name));
-        colorStyles.push(...colorAsStyles);
+        coreStyles.push(...colorAsStyles);
     });
 
-    createSharedLayerStyles(colorStyles);
+    createSharedLayerStyles(coreStyles);
 
-    // const colorsAsLayers = createLayersFromStyles(colorStyles, -2);
-    // const layersAsGroup = createGroupForLayers('Core', colorsAsLayers);
+    const colorLayers = createLayers(coreStyles, -2);
+    const layerGroups = createGroup('Core', colorLayers);
 
-    // LAYERS_TO_RENDER.push(layersAsGroup);
+    LAYERS_TO_RENDER.push(layerGroups);
 }
 
 /*
@@ -115,27 +112,39 @@ function createSharedLayerStyles(colorsAsStyles) {
         });
     });
 }
-
-
-const createColors = () => {
-    // createExtendedColors();
-    createCoreColors();
-};
-
 const renderLayers = () => {
     document.pages[0].layers.push(...LAYERS_TO_RENDER);
 };
 
-const create = () => {
-    createColors();
+const generate = () => {
+    createExtendedColors();
+    createCoreStyles();
     renderLayers();
 };
 export default function() {
     if (OPTIONS.use_GUI) {
-        initUI({ onGenerate: create });
+        initUI({ onGenerate: generate });
     } else {
-        create();
+        generate();
     }
 
     sketch.UI.message('All Done! 🎨');
 }
+
+/*
+    Run
+    Create Colors
+        Extened/Core
+            Loop over tokens
+                Generate layer style for each token
+                    Border
+                    Fill
+            Create shared layer styles
+                Loop over each color's style
+                    Check if exists
+                        sync, or
+                        push new one
+                
+
+
+*/
