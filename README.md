@@ -1,5 +1,7 @@
 # adapt-color-palette
 
+Generate Sketch Layer Styles, Sample Shapes and Document Swatches.
+
 ## Installation
 
 - [Download](../../releases/latest/download/adapt-color-palette.sketchplugin.zip) the latest release of the plugin
@@ -34,7 +36,11 @@ Additionally, if you wish to run the plugin every time it is built:
 
 ```bash
 npm run start
+
 ```
+
+### Adding it to Plugins in Sketch
+run `npm run postinstall` to create a symlink.
 
 ### Custom Configuration
 

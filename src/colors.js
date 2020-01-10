@@ -1,41 +1,4 @@
 const extendedColors = {
-    Reds: [
-        {
-            codeName: 'R900',
-            name: 'Blood Clot',
-            hex: '8A0F0F',
-        },
-        {
-            codeName: 'R700',
-            name: 'Bill',
-            hex: 'CC0000',
-        },
-        {
-            codeName: 'R500',
-            name: 'Lip Smacker',
-            hex: 'ED3233',
-        },
-        {
-            codeName: 'R250',
-            name: 'Sunset',
-            hex: 'F45D5E',
-        },
-        {
-            codeName: 'R100',
-            name: 'Salmon',
-            hex: 'F89697',
-        },
-        {
-            codeName: 'R080',
-            name: 'Sunburn',
-            hex: 'F2BFBF',
-        },
-        {
-            codeName: 'R020',
-            name: 'Rosie',
-            hex: 'FCE3E3',
-        },
-    ],
     Blues: [
         {
             codeName: 'B900',
@@ -147,6 +110,117 @@ const extendedColors = {
             hex: 'EBF9F2',
         },
     ],
+    Neutrals: [
+        {
+            codeName: 'N900',
+            name: 'Dead of Night',
+            hex: '111111',
+        },
+        {
+            codeName: 'N700',
+            name: 'Slate',
+            hex: '484848',
+        },
+        {
+            codeName: 'N500',
+            name: 'Boring',
+            hex: '6D6D6D',
+        },
+        {
+            codeName: 'N250',
+            name: 'Grandma',
+            hex: 'ADADAD',
+        },
+        {
+            codeName: 'N100',
+            name: 'Concrete',
+            hex: 'DDDDDD',
+        },
+        {
+            codeName: 'N020',
+            name: 'Egg White',
+            hex: 'FAFAFA',
+        },
+        {
+            codeName: 'N000',
+            name: 'White',
+            hex: 'FFFFFF',
+        },
+    ],
+    Purples: [
+        {
+            codeName: 'P900',
+            name: 'Royal',
+            hex: '403294',
+        },
+        {
+            codeName: 'P700',
+            name: 'Prince',
+            hex: '5243AA',
+        },
+        {
+            codeName: 'P500',
+            name: 'Cadbury',
+            hex: '6554C0',
+        },
+        {
+            codeName: 'P250',
+            name: 'Romantic',
+            hex: '8777D9',
+        },
+        {
+            codeName: 'P100',
+            name: 'Aura',
+            hex: '998DD9',
+        },
+        {
+            codeName: 'P080',
+            name: 'Lavender',
+            hex: 'C0B6F2',
+        },
+        {
+            codeName: 'P020',
+            name: 'Purplish',
+            hex: 'EAE6FF',
+        },
+    ],
+    Reds: [
+        {
+            codeName: 'R900',
+            name: 'Blood Clot',
+            hex: '8A0F0F',
+        },
+        {
+            codeName: 'R700',
+            name: 'Bill',
+            hex: 'CC0000',
+        },
+        {
+            codeName: 'R500',
+            name: 'Lip Smacker',
+            hex: 'ED3233',
+        },
+        {
+            codeName: 'R250',
+            name: 'Sunset',
+            hex: 'F45D5E',
+        },
+        {
+            codeName: 'R100',
+            name: 'Salmon',
+            hex: 'F89697',
+        },
+        {
+            codeName: 'R080',
+            name: 'Sunburn',
+            hex: 'F2BFBF',
+        },
+        {
+            codeName: 'R020',
+            name: 'Rosie',
+            hex: 'FCE3E3',
+        },
+    ], 
     Yellows: [
         {
             codeName: 'Y900',
@@ -183,81 +257,7 @@ const extendedColors = {
             name: 'Yellowish',
             hex: 'FEF9DC',
         },
-    ],
-    Neutrals: [
-        {
-            codeName: 'N900',
-            name: 'Dead of Night',
-            hex: '111111',
-        },
-        {
-            codeName: 'N700',
-            name: 'Slate',
-            hex: '484848',
-        },
-        {
-            codeName: 'N500',
-            name: 'Boring',
-            hex: '6D6D6D',
-        },
-        {
-            codeName: 'N250',
-            name: 'Grandma',
-            hex: 'ADADAD',
-        },
-        {
-            codeName: 'N100',
-            name: 'Concrete',
-            hex: 'DDDDDD',
-        },
-        {
-            codeName: 'N020',
-            name: 'Egg White',  
-            hex: 'FAFAFA',
-        },
-        {
-            codeName: 'N000',
-            name: 'White',
-            hex: 'FFFFFF',
-        },
-    ],
-    Purples: [
-        {
-            codeName: 'P900',
-            name: 'Royal',
-            hex: '403294',
-        },
-        {
-            codeName: 'P700',
-            name: 'Prince',
-            hex: '5243AA',
-        },
-        {
-            codeName: 'P500',
-            name: 'Cadbury',
-            hex: 'FDA902',
-        },
-        {
-            codeName: 'P250',
-            name: 'Romantic',
-            hex: '8777D9',
-        },
-        {
-            codeName: 'P100',
-            name: 'Aura',
-            hex: '998DD9',
-        },
-        {
-            codeName: 'P080',
-            name: 'Lavender',
-            hex: 'C0B6F2',
-        },
-        {
-            codeName: 'P020',
-            name: 'Purplish',
-            hex: 'EAE6FF',
-        },
-    ],
+    ], 
 };
 
 const coreColors = {
@@ -272,7 +272,7 @@ const coreColors = {
     accent: extendedColors.Blues[2],
     success: extendedColors.Greens[3],
     warning: extendedColors.Yellows[3],
-    error: extendedColors.Reds[4],  
+    error: extendedColors.Reds[4],
 };
 
 export { coreColors, extendedColors };

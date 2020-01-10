@@ -14,42 +14,15 @@ function getShapeProperties({ yOffset, xOffset }) {
         },
         shapeType: 'Oval',
     };
-};
-
-function createLayers(yOffset, xOffset, { hex }, layerName) {
-    const layers = [];
-    layers.push(
-        new ShapePath({
-            ...getShapeProperties({ yOffset, xOffset }),
-            name: `Border/${layerName}`,
-            style: {
-                borders: [
-                    {
-                        thickness: 1,
-                        color: `#${hex}`,
-                        fillType: 'Color',
-                    },
-                ],
-            },
-        })
-    );
-
-    layers.push(
-        new ShapePath({
-            ...getShapeProperties({ yOffset, xOffset }),
-            name: `Fill/${layerName}`,
-            style: {
-                fills: [
-                    {
-                        color: `#${hex}`,
-                        fillType: 'Color',
-                    },
-                ],
-            },
-        })
-    );
-
-    return layers;
 }
 
-export default createLayers;
+function generateLayer(sharedStyle, sharedStyleId, yOffset, xOffset) {
+    return new ShapePath({
+        ...getShapeProperties({ yOffset, xOffset }),
+        name: sharedStyle.name,
+        style: sharedStyle.style,
+        sharedStyleId: sharedStyleId
+    });
+}
+
+export default generateLayer;

@@ -1,60 +1,79 @@
 import sketch from 'sketch';
 import { Group } from 'sketch/dom';
 import { coreColors, extendedColors } from './colors';
-import createLayers from './layer';
+import { generateStyles, getSharedStyleByName, syncSharedToLayer } from './style';
+import generateLayer from './layer';
 import initUI from './ui';
+import renderDocumentColors from './document-colors';
+import { toTitleCase } from './util';
 
-var document = sketch.getSelectedDocument();
+const document = sketch.getSelectedDocument();
 
-function toTitleCase(str) {
-    return str.replace(/\w\S*/g, function(txt) {
-        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+const SHARED_LAYER_STYLES = document.sharedLayerStyles;
+const LAYERS_TO_RENDER = [];
+const OPTIONS = {
+    use_GUI: true,
+    renderDocumentColors: false,
+};
+
+function createLayersFromStyles(styles, yOffset) {
+    let layers = [];
+    styles.forEach((style, index) => {
+        // Each style contains two styles (border + fill)
+        const xOffset = (index % 2 === 0 ? index : index - 1) / 2;
+        const styleId = getSharedStyleByName(SHARED_LAYER_STYLES, style.name).id;
+
+        layers.push(generateLayer(style, styleId, yOffset, xOffset));
     });
+
+    return layers;
+}
+
+function createGroupForLayers(groupName, layers) {
+    const group = new Group({
+        name: toTitleCase(groupName),
+        layers: layers,
+    });
+    group.adjustToFit();
+    return group;
 }
 
 /* 
     Takes a group of swatches for each category and
-    creates two Sketch ShapePath's (Fill + Border)
-
-    It then renders a group of layers for each swatch
-    in the category
+    creates two Sketch Styles (Fill + Border)
 */
-function createSwatchesForCategory(yOffset, category) {
-    let swatches = [],
-        xOffset = 0;
-    const categorySwatches = extendedColors[category];
+function createStylesForCategory(category) {
+    const styles = [];
+    const colors = extendedColors[category];
 
-    Object.keys(categorySwatches).forEach(function(label) {
-        const swatch = categorySwatches[label];
-        const layerName = `_Extended/${toTitleCase(category)}/${swatch.codeName} - ${swatch.name}`;
+    Object.keys(colors).forEach(index => {
+        const color = colors[index];
+        const styleName = `_Extended/${toTitleCase(category)}/${color.codeName} - ${color.name}`;
+        const generatedStyles = generateStyles(color, styleName);
 
-        swatches.push(...createLayers(yOffset, xOffset, swatch, layerName));
-        xOffset++;
+        styles.push(...generatedStyles);
+
+        // if (OPTIONS.renderDocumentColors) {
+        //     renderDocumentColors(document, color);
+        // }
     });
-
-    var categoryGroup = new Group({
-        name: toTitleCase(category),
-        layers: swatches,
-    });
-
-    categoryGroup.adjustToFit();
-    return [categoryGroup];
+    return styles;
 }
 
 /* 
     Used for creating the "Extended" theme colours
 */
 function generateExtendedColors() {
-    const output = [];
-    let yOffset = 0;
-
     // For each category, read and return an array of swatches
-    Object.keys(extendedColors).map(function(category) {
-        output.push(...createSwatchesForCategory(yOffset, category));
-        yOffset++;
-    });
+    Object.keys(extendedColors).forEach((category, index) => {
+        const colorsAsStyles = createStylesForCategory(category, index);
+        
+        renderSharedLayerStyles(colorsAsStyles);
 
-    return output;
+        const colorsAsLayers = createLayersFromStyles(colorsAsStyles, index);
+        const layersAsGroup = createGroupForLayers(category, colorsAsLayers);
+        LAYERS_TO_RENDER.push(layersAsGroup);
+    });
 }
 
 /* 
@@ -62,81 +81,51 @@ function generateExtendedColors() {
     eg. Primary, Secondary, Success etc
 */
 function generateCoreColors() {
-    const swatches = [];
-    let yOffset = 0;
+    const colorStyles = [];
 
-    Object.keys(coreColors).map(function(color) {
-        const swatch = coreColors[color];
-        const layerName = `${toTitleCase(color)}`;
-
-        swatches.push(...createLayers(yOffset, -2, swatch, layerName));
-        yOffset++;
+    Object.keys(coreColors).forEach(name => {
+        const color = coreColors[name];
+        const colorAsStyles = generateStyles(color, toTitleCase(name));
+        colorStyles.push(...colorAsStyles);
     });
 
-    var categoryGroup = new Group({
-        name: 'Wee',
-        layers: swatches,
-    });
-    categoryGroup.adjustToFit();
-    return [categoryGroup];
-}
+    renderSharedLayerStyles(colorStyles);
 
-/* 
-    Figure out if we are trying to create a shared style
-    that already exists.
-*/
-function getSharedStyleByName(sharedStyles, name) {
-    if (!sharedStyles) return;
-    return sharedStyles.filter(style => style.name === name)[0];
-}
-
-/*
-    For Styles that already exist in the library,
-    overwrite the existing layer style (keeps id intact),
-    and sync all layers that have that shared style.
-*/
-function syncSharedToLayer(sharedStyle, layer) {
-    sharedStyle.style = layer.style;
-    const layers = sharedStyle.getAllInstancesLayers();
-    for (let layer of layers) layer.style.syncWithSharedStyle(sharedStyle);
+    const colorsAsLayers = createLayersFromStyles(colorStyles, -2);
+    const layersAsGroup = createGroupForLayers('Core', colorsAsLayers);
+    
+    LAYERS_TO_RENDER.push(layersAsGroup);
 }
 
 /*
     Loop over all newly-created swatches and 
     create (or update) layer styles.
 */
-function renderStyles(layers) {
-    const layerStyles = document.sharedLayerStyles;
-
-    layers.forEach(function(group) {
-        // todo this nesting is not good?
-        group.layers.forEach(function(layer) {
-            const alreadyExistingStyle = getSharedStyleByName(layerStyles, layer.name);
-            if (alreadyExistingStyle) {
-                syncSharedToLayer(alreadyExistingStyle, layer)
-                return;
-            }
-            layerStyles.push({
-                name: layer.name,
-                style: layer.style,
-            });
+function renderSharedLayerStyles(colorsAsStyles) {
+    colorsAsStyles.forEach(function(color) {
+        const alreadyExistingStyle = getSharedStyleByName(SHARED_LAYER_STYLES, color.name);
+        if (alreadyExistingStyle) {
+            syncSharedToLayer(alreadyExistingStyle, color);
+            return;
+        }
+        SHARED_LAYER_STYLES.push({
+            name: color.name,
+            style: color.style,
         });
     });
 }
 
-/*
-    Render layers on page
-*/
-function renderLayers(layers) {
-    document.pages[0].layers.push(...layers);
-}
-
 export default function() {
-    const allColors = [...generateExtendedColors(), ...generateCoreColors()];
     const generate = () => {
-        renderLayers(allColors), renderStyles(allColors);
+        generateExtendedColors();
+        generateCoreColors();
+        document.pages[0].layers.push(...LAYERS_TO_RENDER);
     };
-    initUI({ onGenerate: generate });
+    if (OPTIONS.use_GUI) {
+        initUI({ onGenerate: generate });
+    } else {
+        generate();
+    }
 
     sketch.UI.message('All Done! 🎨');
 }
