@@ -5,13 +5,13 @@
     {
       "name": "🎨 ADAPT - Generate Color Palette",
       "identifier": "main",
-      "script": "./main.js"
+      "script": "./index.js"
     }
   ],
   "menu": {
     "isRoot": true,
     "items": [
-      "main"
+      "index"
     ]
   }
 }
