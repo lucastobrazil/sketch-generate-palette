@@ -1,33 +1,30 @@
 import { Style } from 'sketch/dom';
+import { extendedColors } from './_data';
+import renderDocumentColors from './document';
+import CONFIG from './_config';
+import { toTitleCase } from './_util';
 
-function generateStyles({ hex }, layerName) {
-    const layers = [];
-    layers.push(
-        {
-            name: `Border/${layerName}`,
-            style: new Style({
-                borders: [
-                    {
-                        thickness: 1,
-                        color: `#${hex}`,
-                        fillType: 'Color',
-                    },
-                ],
-            }),
-        },
-        {
-            name: `Fill/${layerName}`,
-            style: new Style({
-                fills: [
-                    {
-                        color: `#${hex}`,
-                        fillType: 'Color',
-                    },
-                ],
-            }),
-        }
-    );
-    return layers;
+function _createBorderStyle(hex) {
+    return new Style({
+        borders: [
+            {
+                thickness: 1,
+                color: `#${hex}`,
+                fillType: 'Color',
+            },
+        ],
+    });
+}
+
+function _createFillStyle(hex) {
+    return new Style({
+        fills: [
+            {
+                color: `#${hex}`,
+                fillType: 'Color',
+            },
+        ],
+    });
 }
 
 /* 
@@ -39,15 +36,39 @@ function getSharedStyleByName(sharedStyles, name) {
     return sharedStyles.filter(style => style.name === name)[0];
 }
 
-/*
-    For Styles that already exist in the library,
-    overwrite the existing layer style (keeps id intact),
-    and sync all layers that have that shared style.
-*/
-function syncSharedToLayer(alreadyExistingStyle, newColor) {
-    alreadyExistingStyle.style = newColor.style;
-    const layers = alreadyExistingStyle.getAllInstancesLayers();
-    for (let layer of layers) layer.style.syncWithSharedStyle(alreadyExistingStyle);
+function createStyles({ hex }, layerName) {
+    return [
+        {
+            name: `Border/${layerName}`,
+            style: _createBorderStyle(hex),
+        },
+        {
+            name: `Fill/${layerName}`,
+            style: _createFillStyle(hex),
+        },
+    ];
 }
 
-export { generateStyles, getSharedStyleByName, syncSharedToLayer };
+/* 
+    Takes a group of swatches for each category and
+    creates two Sketch Styles (Fill + Border)
+*/
+function createStylesForCategory(category) {
+    const styles = [];
+    const colors = extendedColors[category];
+
+    Object.keys(colors).forEach(index => {
+        const color = colors[index];
+        const styleName = `_Extended/${toTitleCase(category)}/${color.codeName} - ${color.name}`;
+        const generatedStyles = createStyles(color, styleName);
+
+        styles.push(...generatedStyles);
+
+        if (CONFIG.RENDER_TO_COLOR_PICKER) {
+            renderDocumentColors(color);
+        }
+    });
+    return styles;
+}
+
+export { createStyles, getSharedStyleByName, createStylesForCategory };
