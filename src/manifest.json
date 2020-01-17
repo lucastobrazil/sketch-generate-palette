@@ -3,15 +3,15 @@
   "icon": "icon.png",
   "commands": [
     {
-      "name": "ADAPT - Generate Color Palette",
-      "identifier": "main",
+      "name": "Generate Color Palette",
+      "identifier": "adapt-color-palette.index-identifier",
       "script": "./index.js"
     }
   ],
   "menu": {
     "isRoot": true,
     "items": [
-      "index"
+      "adapt-color-palette.index-identifier"
     ]
   }
 }
