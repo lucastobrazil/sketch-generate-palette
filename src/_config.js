@@ -1,0 +1,10 @@
+const CONFIG = {
+    USE_GUI: false,
+    RENDER_TO_COLOR_PICKER: true,
+    SPACE: 32,
+    SWATCH_SIZE: 96
+};
+
+CONFIG.SWATCH_SPACING = CONFIG.SPACE + CONFIG.SWATCH_SIZE 
+
+export default CONFIG;

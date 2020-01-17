@@ -1,3 +1,6 @@
+/*
+These are our color design tokens.
+*/
 const extendedColors = {
     Blues: [
         {
