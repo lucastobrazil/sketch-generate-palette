@@ -1,7 +1,7 @@
 export default function({ onGenerate }) {
     const alertWindow = COSAlertWindow.new();
     const extendedInputField = NSTextField.alloc().initWithFrame(NSMakeRect(0, 0, 240, 280));
-    extendedInputField.placeholderString = `{ 
+    extendedInputField.stringValue = `{ 
     reds: [
         { 
             codeName: 'R100', 
