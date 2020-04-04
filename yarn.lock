@@ -719,10 +719,10 @@
     "@babel/preset-env" "^7.0.0"
     "@babel/preset-react" "^7.0.0"
 
-"@skpm/builder@^0.7.0":
-  version "0.7.4"
-  resolved "https://registry.yarnpkg.com/@skpm/builder/-/builder-0.7.4.tgz#9bfec0596e18295cf411b9872010ded354a6f69d"
-  integrity sha512-ccYnY4jkzl91HMofQhcP8RHFWpPOCSQ4gd4y2yX6Wb14XJgRsnD4v0VmT1HPIhk24QsVrK8N/Yk6sbogmNzxQQ==
+"@skpm/builder@^0.7.5":
+  version "0.7.5"
+  resolved "https://registry.yarnpkg.com/@skpm/builder/-/builder-0.7.5.tgz#69694116e513ee1463a4decb23202ded18dbf424"
+  integrity sha512-eaQGYb95/AoI4x11Ay8AB0LPG6Xn6O5+7FzVEOe9La9D3GfSgrcVpn+JdE1lpmEo83vCFlttbkJVrzjQ93EHNA==
   dependencies:
     "@babel/core" "^7.4.3"
     "@skpm/babel-preset" "0.2.1"
@@ -972,9 +972,9 @@ abbrev@1:
   integrity sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==
 
 acorn@^6.2.1:
-  version "6.3.0"
-  resolved "https://registry.yarnpkg.com/acorn/-/acorn-6.3.0.tgz#0087509119ffa4fc0a0041d1e93a417e68cb856e"
-  integrity sha512-/czfa8BwS88b9gWQVhc8eknunSA2DoJpJyTQkhheIf5E48u1N0R4q/YxxsAeqRrmK9TQ/uYfgLDfZo91UlANIA==
+  version "6.4.1"
+  resolved "https://registry.yarnpkg.com/acorn/-/acorn-6.4.1.tgz#531e58ba3f51b9dacb9a6646ca4debf5b14ca474"
+  integrity sha512-ZVA9k326Nwrj3Cj9jlh3wGFutC2ZornPNARZwsNYqQYgN0EsV2d53w5RN/co65Ohn4sUAUtb1rSUAOD6XN9idA==
 
 ajv-errors@^1.0.0:
   version "1.0.1"
