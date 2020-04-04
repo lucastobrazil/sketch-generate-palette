@@ -12,7 +12,7 @@ function _getShapeProperties({ yOffset, xOffset }) {
             x: SWATCH_SPACING * xOffset,
             y: SWATCH_SPACING * yOffset,
         },
-        shapeType: 'Oval',
+        shapeType: 'Rectangle',
     };
 }
 
