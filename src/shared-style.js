@@ -5,7 +5,12 @@ import { getSharedStyleByName } from './style';
     and sync all layers that have that shared style.
 */
 function _syncSharedToLayer(alreadyExistingStyle, newColor) {
-    alreadyExistingStyle.style = newColor.style;
+    try {
+        alreadyExistingStyle.style = newColor.style;
+    } catch (error) {
+        console.error(error);
+        console.log(alreadyExistingStyle);
+    }
     const layers = alreadyExistingStyle.getAllInstancesLayers();
     for (let layer of layers) layer.style.syncWithSharedStyle(alreadyExistingStyle);
 }
@@ -16,7 +21,7 @@ function _syncSharedToLayer(alreadyExistingStyle, newColor) {
 */
 export default function createSharedLayerStyles(colorsAsStyles, sharedLayerStyles) {
     const _styles = [];
-    colorsAsStyles.forEach(function(color) {
+    colorsAsStyles.forEach(function (color) {
         const alreadyExistingStyle = getSharedStyleByName(sharedLayerStyles, color.name);
         if (alreadyExistingStyle) {
             _syncSharedToLayer(alreadyExistingStyle, color);
