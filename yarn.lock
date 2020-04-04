@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@adapt-design-system/tokens@^0.1.0":
-  version "0.0.0"
-  resolved "https://registry.yarnpkg.com/@adapt-design-system/tokens/-/tokens-0.1.0.tgz#5a4c33269efc58d5257282909d0e030e924acd58"
-  integrity sha512-5SEKWsJZ9RLJGWMiHfErguqcuj+/SKFuwZOP12TiB5QPJn31lbjC3aajedMfYhWl8ncl+SF6da1hEuCzmX4T9A==
+"@adapt-design-system/tokens@^0.0.0":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@adapt-design-system/tokens/-/tokens-0.1.1.tgz#96db99a09a480a292307c456b843251797a881ec"
+  integrity sha512-yG0a4gi+J2AKpQXoZWQdUlEBLPmW+6+8dJqThqE4fI58muVSZYsL2yBMk7sojy1Rbg6HS9JLG/BcG5mxqxwoyw==
 
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.5.5":
   version "7.5.5"

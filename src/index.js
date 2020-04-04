@@ -65,5 +65,5 @@ export default function () {
         start();
     }
 
-    sketch.UI.message('All Done! 🎨');
+    sketch.UI.message('Color Palette Generated! 🎨');
 }
