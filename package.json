@@ -23,5 +23,8 @@
   "devDependencies": {
     "@skpm/builder": "^0.7.5"
   },
-  "author": "lucastobrazil <lucas.arundell@gmail.com>"
+  "author": "lucastobrazil <lucas.arundell@gmail.com>",
+  "dependencies": {
+    "@adapt-design-system/tokens": "^0.0.0"
+  }
 }

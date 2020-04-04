@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@adapt-design-system/tokens@^0.1.0":
+  version "0.0.0"
+  resolved "https://registry.yarnpkg.com/@adapt-design-system/tokens/-/tokens-0.1.0.tgz#5a4c33269efc58d5257282909d0e030e924acd58"
+  integrity sha512-5SEKWsJZ9RLJGWMiHfErguqcuj+/SKFuwZOP12TiB5QPJn31lbjC3aajedMfYhWl8ncl+SF6da1hEuCzmX4T9A==
+
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.5.5":
   version "7.5.5"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.5.5.tgz#bc0782f6d69f7b7d49531219699b988f669a8f9d"
@@ -719,10 +724,10 @@
     "@babel/preset-env" "^7.0.0"
     "@babel/preset-react" "^7.0.0"
 
-"@skpm/builder@^0.7.0":
-  version "0.7.4"
-  resolved "https://registry.yarnpkg.com/@skpm/builder/-/builder-0.7.4.tgz#9bfec0596e18295cf411b9872010ded354a6f69d"
-  integrity sha512-ccYnY4jkzl91HMofQhcP8RHFWpPOCSQ4gd4y2yX6Wb14XJgRsnD4v0VmT1HPIhk24QsVrK8N/Yk6sbogmNzxQQ==
+"@skpm/builder@^0.7.5":
+  version "0.7.5"
+  resolved "https://registry.yarnpkg.com/@skpm/builder/-/builder-0.7.5.tgz#69694116e513ee1463a4decb23202ded18dbf424"
+  integrity sha512-eaQGYb95/AoI4x11Ay8AB0LPG6Xn6O5+7FzVEOe9La9D3GfSgrcVpn+JdE1lpmEo83vCFlttbkJVrzjQ93EHNA==
   dependencies:
     "@babel/core" "^7.4.3"
     "@skpm/babel-preset" "0.2.1"
