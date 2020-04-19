@@ -4,10 +4,11 @@ import createGroup from './group';
 import createLayers from './layer';
 import initUI from './ui';
 import createSharedLayerStyles from './shared-style';
-import { ThemeColors,ColorPalette } from '@adapt-design-system/tokens';
+import { ThemeColors, ColorPalette } from '@adapt-design-system/tokens';
 import { createStyles, createStylesForCategory } from './style';
 import { toTitleCase } from './_util';
-
+import { createPageWithName } from './page';
+import { addSupportText } from './text';
 const document = sketch.getSelectedDocument();
 
 const SHARED_LAYER_STYLES = document.sharedLayerStyles;
@@ -54,16 +55,40 @@ function createCoreColors() {
     return [layerGroups];
 }
 
+function getColorsPage(document) {
+    return document.pages.find((page) => page.name === CONFIG.COLORS_PAGE_NAME);
+}
+
+function deleteLayers(page) {
+    page.layers = [];
+}
+
+function getTextOffset(factor) {
+    return factor * CONFIG.SWATCH_SPACING;
+}
+
 function start() {
-    document.pages[0].layers.push(...createExtendedColors(), ...createCoreColors());
+    let COLORS_PAGE = getColorsPage(document);
+    if (!COLORS_PAGE) {
+        createPageWithName(document, CONFIG.COLORS_PAGE_NAME);
+        COLORS_PAGE = getColorsPage(document);
+    }
+    deleteLayers(COLORS_PAGE);
+    COLORS_PAGE.layers.push(
+        addSupportText('These swatches have been automatically generated.', getTextOffset(-3)),
+        addSupportText('To edit, update both the fill and border styles, then click .', getTextOffset(-3)),
+        addSupportText('Extended', getTextOffset(-2)),
+        ...createExtendedColors(),
+        addSupportText('Core'),
+        ...createCoreColors()
+    );
+    sketch.UI.message('Color Palette Generated! 🎨');
 }
 
 export default function () {
     if (CONFIG.USE_GUI) {
-        initUI({ onGenerate: start });
+        initUI({ onGenerate: start, document, destination: CONFIG.COLORS_PAGE_NAME });
     } else {
         start();
     }
-
-    sketch.UI.message('Color Palette Generated! 🎨');
 }

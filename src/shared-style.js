@@ -9,7 +9,6 @@ function _syncSharedToLayer(alreadyExistingStyle, newColor) {
         alreadyExistingStyle.style = newColor.style;
     } catch (error) {
         console.error(error);
-        console.log(alreadyExistingStyle);
     }
     const layers = alreadyExistingStyle.getAllInstancesLayers();
     for (let layer of layers) layer.style.syncWithSharedStyle(alreadyExistingStyle);
@@ -23,6 +22,10 @@ export default function createSharedLayerStyles(colorsAsStyles, sharedLayerStyle
     const _styles = [];
     colorsAsStyles.forEach(function (color) {
         const alreadyExistingStyle = getSharedStyleByName(sharedLayerStyles, color.name);
+        if (alreadyExistingStyle && alreadyExistingStyle.getLibrary()) {
+            console.log('Encountered a style linked to an external library.', color.name);
+            // alreadyExistingStyle.unlinkFromLibrary()
+        }
         if (alreadyExistingStyle) {
             _syncSharedToLayer(alreadyExistingStyle, color);
             return;
