@@ -59,11 +59,7 @@ function getColorsPage(document) {
     return document.pages.find((page) => page.name === CONFIG.COLORS_PAGE_NAME);
 }
 
-function deleteLayers(page) {
-    page.layers = [];
-}
-
-function getTextOffset(factor) {
+function getTextVerticalOffset(factor) {
     return factor * CONFIG.SWATCH_SPACING;
 }
 
@@ -73,11 +69,12 @@ function start() {
         createPageWithName(document, CONFIG.COLORS_PAGE_NAME);
         COLORS_PAGE = getColorsPage(document);
     }
-    deleteLayers(COLORS_PAGE);
+    // Erase all other layers on the page.
+    COLORS_PAGE.layers = [];
     COLORS_PAGE.layers.push(
-        addSupportText('These swatches have been automatically generated.', getTextOffset(-3)),
-        addSupportText('To edit, update both the fill and border styles, then click .', getTextOffset(-3)),
-        addSupportText('Extended', getTextOffset(-2)),
+        addSupportText('These swatches have been automatically generated.', getTextVerticalOffset(-3)),
+        addSupportText('To edit, update both the fill and border styles, then click .', getTextVerticalOffset(-3)),
+        addSupportText('Extended', getTextVerticalOffset(-2)),
         ...createExtendedColors(),
         addSupportText('Core'),
         ...createCoreColors()
@@ -87,7 +84,7 @@ function start() {
 
 export default function () {
     if (CONFIG.USE_GUI) {
-        initUI({ onGenerate: start, document, destination: CONFIG.COLORS_PAGE_NAME });
+        initUI({ onGenerate: start, document, destinationPage: CONFIG.COLORS_PAGE_NAME });
     } else {
         start();
     }
