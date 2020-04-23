@@ -5,12 +5,12 @@
         {
             "name": "🎨 Generate Color Palette",
             "identifier": "adapt-color-palette.index-identifier",
-            "script": "./index.js"
+            "script": "./color-palette/index.js"
         },
         {
             "name": "📃 Generate Text Styles",
             "identifier": "adapt-text-styles.index-identifier",
-            "script": "./index.js"
+            "script": "./color-palette/index.js"
         }
     ],
     "menu": {

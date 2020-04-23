@@ -72,7 +72,7 @@ function start() {
     // Erase all other layers on the page.
     COLORS_PAGE.layers = [];
     COLORS_PAGE.layers.push(
-        addSupportText('These swatches have been automatically generated.', getTextVerticalOffset(-3)),
+        addSupportText('These swatches have been automatically generated.', getTextVerticalOffset(-4)),
         addSupportText('To edit, update both the fill and border styles, then click .', getTextVerticalOffset(-3)),
         addSupportText('Extended', getTextVerticalOffset(-2)),
         ...createExtendedColors(),
