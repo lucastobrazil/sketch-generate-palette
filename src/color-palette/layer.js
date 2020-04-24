@@ -1,6 +1,6 @@
 import { ShapePath } from 'sketch/dom';
 import { getSharedStyleByName } from './style';
-import CONFIG from './_config';
+import CONFIG from '../config';
 
 
 const { SWATCH_SPACING, SWATCH_SIZE } = CONFIG;

@@ -1,7 +1,7 @@
 import { Style } from 'sketch/dom';
 import { ColorPalette } from '@adapt-design-system/tokens';
 import renderDocumentColors from './document';
-import CONFIG from './_config';
+import CONFIG from '../config';
 import { toTitleCase } from './_util';
 
 function _createBorderStyle(hex) {

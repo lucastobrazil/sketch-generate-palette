@@ -1,5 +1,5 @@
 import sketch from 'sketch';
-import CONFIG from './_config';
+import CONFIG from '../config';
 import createGroup from './group';
 import createLayers from './layer';
 import initUI from './ui';
@@ -7,8 +7,7 @@ import createSharedLayerStyles from './shared-style';
 import { ThemeColors, ColorPalette } from '@adapt-design-system/tokens';
 import { createStyles, createStylesForCategory } from './style';
 import { toTitleCase } from './_util';
-import { createPageWithName } from './page';
-import { addSupportText } from './text';
+import { getPage, addSupportText, getTextVerticalOffset, createPageWithName } from '../utils';
 const document = sketch.getSelectedDocument();
 
 const SHARED_LAYER_STYLES = document.sharedLayerStyles;
@@ -55,19 +54,11 @@ function createCoreColors() {
     return [layerGroups];
 }
 
-function getColorsPage(document) {
-    return document.pages.find((page) => page.name === CONFIG.COLORS_PAGE_NAME);
-}
-
-function getTextVerticalOffset(factor) {
-    return factor * CONFIG.SWATCH_SPACING;
-}
-
 function start() {
-    let COLORS_PAGE = getColorsPage(document);
+    let COLORS_PAGE = getPage(document, CONFIG.COLORS_PAGE_NAME);
     if (!COLORS_PAGE) {
         createPageWithName(document, CONFIG.COLORS_PAGE_NAME);
-        COLORS_PAGE = getColorsPage(document);
+        COLORS_PAGE = getPage(document, CONFIG.COLORS_PAGE_NAME);
     }
     // Erase all other layers on the page.
     COLORS_PAGE.layers = [];
