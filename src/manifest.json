@@ -10,7 +10,7 @@
         {
             "name": "📃 Generate Text Styles",
             "identifier": "adapt-text-styles.index-identifier",
-            "script": "./color-palette/index.js"
+            "script": "./text-styles/index.js"
         }
     ],
     "menu": {
