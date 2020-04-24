@@ -2,6 +2,7 @@ import { ShapePath } from 'sketch/dom';
 import { getSharedStyleByName } from './style';
 import CONFIG from './_config';
 
+
 const { SWATCH_SPACING, SWATCH_SIZE } = CONFIG;
 
 function _getShapeProperties({ yOffset, xOffset }) {
@@ -12,7 +13,7 @@ function _getShapeProperties({ yOffset, xOffset }) {
             x: SWATCH_SPACING * xOffset,
             y: SWATCH_SPACING * yOffset,
         },
-        shapeType: 'Oval',
+        shapeType: 'Rectangle',
     };
 }
 

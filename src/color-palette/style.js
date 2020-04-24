@@ -1,5 +1,5 @@
 import { Style } from 'sketch/dom';
-import { extendedColors } from './_data';
+import { ColorPalette } from '@adapt-design-system/tokens';
 import renderDocumentColors from './document';
 import CONFIG from './_config';
 import { toTitleCase } from './_util';
@@ -33,7 +33,7 @@ function _createFillStyle(hex) {
 */
 function getSharedStyleByName(sharedStyles, name) {
     if (!sharedStyles) return;
-    return sharedStyles.filter(style => style.name === name)[0];
+    return sharedStyles.filter((style) => style.name === name)[0];
 }
 
 function createStyles({ hex }, layerName) {
@@ -55,9 +55,9 @@ function createStyles({ hex }, layerName) {
 */
 function createStylesForCategory(category) {
     const styles = [];
-    const colors = extendedColors[category];
+    const colors = ColorPalette[category];
 
-    Object.keys(colors).forEach(index => {
+    Object.keys(colors).forEach((index) => {
         const color = colors[index];
         const styleName = `_Extended/${toTitleCase(category)}/${color.codeName} - ${color.name}`;
         const generatedStyles = createStyles(color, styleName);

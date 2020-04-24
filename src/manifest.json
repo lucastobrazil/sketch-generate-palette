@@ -1,17 +1,21 @@
 {
-  "$schema": "https://raw.githubusercontent.com/BohemianCoding/SketchAPI/develop/docs/sketch-plugin-manifest-schema.json",
-  "icon": "icon.png",
-  "commands": [
-    {
-      "name": "Generate Color Palette",
-      "identifier": "adapt-color-palette.index-identifier",
-      "script": "./index.js"
+    "$schema": "https://raw.githubusercontent.com/BohemianCoding/SketchAPI/develop/docs/sketch-plugin-manifest-schema.json",
+    "icon": "icon.png",
+    "commands": [
+        {
+            "name": "🎨 Generate Color Palette",
+            "identifier": "adapt-color-palette.index-identifier",
+            "script": "./color-palette/index.js"
+        },
+        {
+            "name": "📃 Generate Text Styles",
+            "identifier": "adapt-text-styles.index-identifier",
+            "script": "./text-styles/index.js"
+        }
+    ],
+    "menu": {
+        "title": "ADAPT Design System",
+        "isRoot": false,
+        "items": ["adapt-color-palette.index-identifier", "adapt-text-styles.index-identifier"]
     }
-  ],
-  "menu": {
-    "isRoot": true,
-    "items": [
-      "adapt-color-palette.index-identifier"
-    ]
-  }
 }
