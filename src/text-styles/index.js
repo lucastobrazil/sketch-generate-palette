@@ -1,13 +1,20 @@
 import sketch from 'sketch';
-import { FontSizes, FontWeights, Fonts } from '@adapt-design-system/tokens';
-import { getPage, addSupportText, getTextVerticalOffset, createPageWithName } from '../utils';
+import { FontSizes, FontWeights, Fonts, ThemeColors } from '@adapt-design-system/tokens';
+import { getPage, addSupportText, getTextVerticalOffset, createPageWithName, toTitleCase } from '../utils';
 import CONFIG from '../config';
 import { createTextLayer, textAlignments } from './text';
 import { Artboard } from 'sketch/dom';
 
 const document = sketch.getSelectedDocument();
+const validColors = ['text', 'white', 'subduedText', 'primary', 'accent', 'success', 'warning', 'error'];
 
-const textColors = ['text', 'white', 'subduedText', 'primary', 'accent', 'success', 'warning', 'error'];
+const textColors2 = Object.keys(ThemeColors)
+    .filter((key) => validColors.includes(key))
+    .reduce((obj, key) => {
+        obj[key] = ThemeColors[key];
+        return obj;
+    }, {});
+
 
 // @todo read this from the tokens
 const fontFamilies = [
@@ -21,123 +28,91 @@ const getValues = (data) => {
     return output;
 };
 
-const fontSizes = getValues(FontSizes);
+const getFontSizes = (data) => {
+    const output = {};
+    data.map(({ name, value, lineHeight }) => (output[name] = { lineHeight, fontSizeValue: value }));
+    return output;
+};
+
+const fontSizes = getFontSizes(FontSizes);
 const fontWeights = getValues(FontWeights);
 
-/*
- for each font family,
- For each font color,
- for each alignment,
- generate a layer set of font sizes
- and the text box should contain the name
+const generateTextLayers = () => {
+    let yOffset = 0;
+    let xOffset = 0;
+    let prevAlignmentIndex = 0;
+    let prevFontFamilyIndex = 0;
 
-Y
-Group * font Family
-Font size * iteration
+    const X_SPACING = 500;
+    const Y_SPACING = 130;
+    const FONT_FAMILY_SPACING = 5000;
 
-<All>
-    <FontFamily is="1">
-        <Color primary>
-            <TextSizes align="left">
-                <Text fontSize="foo" />
-                <Text fontSize="foo" bold />
-                <Text fontSize="bar" />
-                <Text fontSize="bar" bold />
-            </TextSizes>
-            <TextSizes align="right">
-                <Text fontSize="foo" />
-                <Text fontSize="bar" />
-            </TextSizes>
-        </Color>
-        <Color accent>
+    const HELPER_TEXT_COLOR = '#fe7e51';
 
-        </Color>
-    </FontFamily>
-</All>
+    const _getAdditionalYOffset = (prevFontFamilyIndex, fontFamilyIndex) => {
+        /* 
+            Check if we're still rendering the same font family, 
+            thus no additional offset.
+        */
+        if (prevFontFamilyIndex === fontFamilyIndex) {
+            return 0;
+        }
+        // Update the index as we know it's a new font family
+        prevFontFamilyIndex = fontFamilyIndex;
+        return FONT_FAMILY_SPACING;
+    };
 
-*/
-
-const createTextLayers = ({ text, yOffset, fontSize, fontFamily, name, alignment, fontWeight }) => {
-    return createTextLayer({
-        text,
-        yOffset,
-        fontSize,
-        fontFamily,
-        name,
-        alignment: alignment,
-        fontWeight,
-    });
-};
-
-const mock = () => {
-    const output = fontFamilies.map((fontFamily, fontFamilyIndex) =>
-        textColors.map((color, textColorsIndex) =>
+    const output = fontFamilies.map((fontFamily, fontFamilyIndex) => [
+        createTextLayer({
+            fontSize: 180,
+            text: toTitleCase(`${fontFamily.name} - ${fontFamily.value}`),
+            color: HELPER_TEXT_COLOR,
+            x: xOffset === 0 ? xOffset : xOffset + X_SPACING,
+            y: -Y_SPACING * 3,
+        }),
+        Object.entries(textColors2).map(([colorName, colorValue], textColorsIndex) => [
+            createTextLayer({
+                fontSize: 180,
+                fontWeight: 4,
+                text: toTitleCase(colorName),
+                color: HELPER_TEXT_COLOR,
+                x: xOffset === 0 ? xOffset : xOffset + X_SPACING,
+                y: -Y_SPACING,
+            }),
             textAlignments.map((alignment, textAlignmentsIndex) =>
-                Object.entries(fontSizes).map(([fontSizeName, fontSizeValue], fontSizesIndex) =>
-                    Object.entries(fontWeights).map(([name, weightValue], fontWeightsIndex) =>
-                        // console.log({
-                        //     fontWeight: weightValue,
-                        //     fontSize: fontSizeValue,
-                        //     alignment: textAlignments[index],
-                        //     text: fontSizeName,
-                        //     color,
-                        //     fontFamily: fontFamily.value,
-                        // })
-                        createTextLayer({
-                            fontWeight: weightValue,
+                Object.entries(fontSizes).map(([fontSizeName, { lineHeight, fontSizeValue }], fontSizesIndex) =>
+                    Object.entries(fontWeights).map(([name, weightValue], fontWeightsIndex) => {
+                        // if (prevFontFamilyIndex !== fontFamilyIndex) {
+                        //     xOffset = 0;
+                        //     prevFontFamilyIndex = fontFamilyIndex;
+                        // }
+
+                        if (prevAlignmentIndex !== textAlignmentsIndex) {
+                            // reset the Y value if it's a new alignment
+                            yOffset = 0;
+
+                            // increment the X if it's a new alignment
+                            xOffset += X_SPACING;
+                            prevAlignmentIndex = textAlignmentsIndex;
+                        }
+
+                        return createTextLayer({
+                            fontWeight: name,
                             fontSize: fontSizeValue,
+                            lineHeight: Math.round(lineHeight * fontSizeValue),
                             alignment: textAlignments[textAlignmentsIndex],
-                            text: fontSizeName,
-                            color,
+                            text: toTitleCase(fontSizeName),
+                            color: `#${colorValue.hex}`,
                             fontFamily: fontFamily.value,
-                            xOffset: textColorsIndex * textAlignmentsIndex + 190,
-                            yOffset:
-                                fontWeightsIndex *
-                                fontSizesIndex *
-                                textAlignmentsIndex *
-                                textColorsIndex *
-                                fontFamilyIndex +
-                                190,
-                        })
-                    )
+                            x: xOffset,
+                            y: (yOffset += Y_SPACING) + _getAdditionalYOffset(prevFontFamilyIndex, fontFamilyIndex),
+                        });
+                    })
                 )
-            )
-        )
-    );
-    // console.log(output);
+            ),
+        ]),
+    ]);
     return output.flat(Infinity);
-};
-
-const createTextForFont = ({ font, groupYOffset }) => {
-    const { name, value } = font;
-    return Object.entries(getValues(FontSizes)).map(([key, fontSize], index) => {
-        return createTextForAlignment({
-            text: key,
-            yOffset: index + 50 + fontSize,
-            fontSize: fontSize,
-            fontFamily: value,
-            name: name,
-        });
-    });
-};
-
-const createTextStyles = () => {
-    const output = [];
-    // fontFamilies.map((fontFamily, index) =>
-    //     output.push(
-    //         new Artboard({
-    //             frame: {
-    //                 x: 500 * index,
-    //                 y: 0,
-    //             },
-    //             name: 'Font Family',
-    //             flowStartPoint: true,
-    //             layers: createTextForFont({ font: fontFamily, groupYOffset: index + 1 }),
-    //         }).adjustToFit()
-    //     )
-    // );
-    return mock();
-    return output;
 };
 
 const start = () => {
@@ -149,8 +124,7 @@ const start = () => {
     // Erase all other layers on the page.
     TEXT_PAGE.layers = [];
     TEXT_PAGE.layers.push(
-        // ...createTextStyles(),
-        ...mock(),
+        ...generateTextLayers(),
         addSupportText('These text layers and styles have been automatically generated.', getTextVerticalOffset(-4))
     );
     sketch.UI.message('Text Styles Generated! 📃');
@@ -158,7 +132,4 @@ const start = () => {
 
 export default () => {
     start();
-    // console.log(getFontSizes());
-    // console.log(getValues(FontWeights));
-    // console.log(getValues(Fonts));
 };

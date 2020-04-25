@@ -1,4 +1,3 @@
-
 import CONFIG from './config.js';
 import { Text } from 'sketch/dom';
 import { Page } from 'sketch/dom';
@@ -43,4 +42,10 @@ export function getPage(document, pageName) {
 
 export function getTextVerticalOffset(factor) {
     return factor * CONFIG.SWATCH_SPACING;
+}
+
+export function toTitleCase(str) {
+    return str.replace(/\w\S*/g, function (txt) {
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
 }

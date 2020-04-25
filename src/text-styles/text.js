@@ -6,23 +6,36 @@ export const textAlignments = [
     Text.Alignment.right,
     Text.Alignment.justify,
 ];
+// https://developer.sketch.com/reference/api/#style
+export const fontWeightsLookup = { normal: 4, bold: 8 };
 
-export function createTextLayer({ text, fontSize, fontFamily, xOffset = 0, yOffset = 0, alignment }) {
+export function createTextLayer({
+    text,
+    color = '#ffffff',
+    fontSize = 12,
+    fontFamily = 'Arial',
+    x = 0,
+    y = 0,
+    alignment = Text.Alignment.left,
+    fontWeight = 0,
+    lineHeight = null,
+}) {
     return new Text({
         text,
         style: {
-            textColor: '#cc0000',
+            textColor: color,
             fontSize: fontSize,
             // todolineheights
-            lineHeight: fontSize * 1.6,
+            lineHeight,
             alignment,
             fontFamily: fontFamily,
+            fontWeight: fontWeightsLookup[fontWeight],
         },
         frame: {
             width: 200,
             height: 42,
-            x: xOffset,
-            y: yOffset,
+            x,
+            y,
         },
     }).adjustToFit();
 }
