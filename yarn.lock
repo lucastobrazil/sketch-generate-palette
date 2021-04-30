@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@adapt-design-system/tokens@^0.0.0":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@adapt-design-system/tokens/-/tokens-0.1.1.tgz#96db99a09a480a292307c456b843251797a881ec"
-  integrity sha512-yG0a4gi+J2AKpQXoZWQdUlEBLPmW+6+8dJqThqE4fI58muVSZYsL2yBMk7sojy1Rbg6HS9JLG/BcG5mxqxwoyw==
+"@adapt-design-system/tokens@^0.1.0":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@adapt-design-system/tokens/-/tokens-0.1.2.tgz#3ce694537eba08afc44e98f31ab3ec6c91629ad5"
+  integrity sha512-J8C2/AYZGRlRp+YF2kv/vH7RDCrHYZIAiA+THgZ/FlldRm6b1DHncEEPRUfH8+IN8bKlKLGWW8bpDsYwrNDAiQ==
 
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.5.5":
   version "7.5.5"
@@ -1874,9 +1874,9 @@ fast-json-stable-stringify@^2.0.0:
   integrity sha1-1RQsDK7msRifh9OnYREGT4bIu/I=
 
 figgy-pudding@^3.5.1:
-  version "3.5.1"
-  resolved "https://registry.yarnpkg.com/figgy-pudding/-/figgy-pudding-3.5.1.tgz#862470112901c727a0e495a80744bd5baa1d6790"
-  integrity sha512-vNKxJHTEKNThjfrdJwHc7brvM6eVevuO5nTj6ez8ZQ1qbXTvGthucRF7S4vf2cr71QVnT70V34v0S1DyQsti0w==
+  version "3.5.2"
+  resolved "https://registry.yarnpkg.com/figgy-pudding/-/figgy-pudding-3.5.2.tgz#b4eee8148abb01dcf1d1ac34367d59e12fa61d6e"
+  integrity sha512-0btnI/H8f2pavGMN8w40mlSKOfTK2SVJmBfBeVIj3kNw0swwgzyRq0d5TJVOwodFmtvpPeWPN/MCcfuWF0Ezbw==
 
 fill-range@^4.0.0:
   version "4.0.0"
@@ -3394,9 +3394,9 @@ sprintf-js@~1.0.2:
   integrity sha1-BOaSb2YolTVPPdAVIDYzuFcpfiw=
 
 ssri@^6.0.1:
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/ssri/-/ssri-6.0.1.tgz#2a3c41b28dd45b62b63676ecb74001265ae9edd8"
-  integrity sha512-3Wge10hNcT1Kur4PDFwEieXSCMCJs/7WvSACcrMYrNp+b8kDL1/0wJch5Ni2WrtwEa2IO8OsVfeKIciKCDx/QA==
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/ssri/-/ssri-6.0.2.tgz#157939134f20464e7301ddba3e90ffa8f7728ac5"
+  integrity sha512-cepbSq/neFK7xB6A50KHN0xHDotYzq58wWCa5LeWqnPrHG8GzfEjO/4O8kpmcGW+oaxkvhEJCWgbgNk4/ZV93Q==
   dependencies:
     figgy-pudding "^3.5.1"
 
