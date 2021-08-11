@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@adapt-design-system/tokens@^0.0.0":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@adapt-design-system/tokens/-/tokens-0.1.1.tgz#96db99a09a480a292307c456b843251797a881ec"
-  integrity sha512-yG0a4gi+J2AKpQXoZWQdUlEBLPmW+6+8dJqThqE4fI58muVSZYsL2yBMk7sojy1Rbg6HS9JLG/BcG5mxqxwoyw==
+"@adapt-design-system/tokens@^0.1.0":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@adapt-design-system/tokens/-/tokens-0.1.2.tgz#3ce694537eba08afc44e98f31ab3ec6c91629ad5"
+  integrity sha512-J8C2/AYZGRlRp+YF2kv/vH7RDCrHYZIAiA+THgZ/FlldRm6b1DHncEEPRUfH8+IN8bKlKLGWW8bpDsYwrNDAiQ==
 
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.5.5":
   version "7.5.5"
@@ -2905,9 +2905,9 @@ path-is-absolute@^1.0.0:
   integrity sha1-F0uSaHNVNP+8es5r9TpanhtcX18=
 
 path-parse@^1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/path-parse/-/path-parse-1.0.6.tgz#d62dbb5679405d72c4737ec58600e9ddcf06d24c"
-  integrity sha512-GSmOT2EbHrINBf9SR7CDELwlJ8AENk3Qn7OikK4nFYAu3Ote2+JYNVvkpAEQm3/TLNEJFD/xZJjzyxg3KBWOzw==
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/path-parse/-/path-parse-1.0.7.tgz#fbc114b60ca42b30d9daf5858e4bd68bbedb6735"
+  integrity sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==
 
 path-type@^3.0.0:
   version "3.0.0"
